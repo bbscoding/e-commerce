@@ -5,13 +5,22 @@ import { CiShoppingBasket } from "react-icons/ci";
 import { MdOutlineLightMode } from "react-icons/md";
 import { MdLightMode } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
+import Badge from '@mui/material/Badge';
+import { useDispatch, useSelector } from 'react-redux';
+import { setDrawer } from '../redux/slices/basketSlice';
 
 
 
 
 function Header() {
     const [darkTheme, setDarkTheme] = useState(false)
+    const dispatch = useDispatch()
+
     const navigate = useNavigate("")
+
+
+    const { products } = useSelector((store) => store.basket)
+
     const changeDarkTheme = () => {
         const root = document.querySelector("#root")
         if (darkTheme) {
@@ -35,8 +44,9 @@ function Header() {
                     {
                         darkTheme ? <MdOutlineLightMode className='icon' onClick={changeDarkTheme} /> : <MdLightMode className='icon' onClick={changeDarkTheme} />
                     }
-
-                    <CiShoppingBasket className='icon' />
+                    <Badge onClick={() => dispatch(setDrawer())} badgeContent={products.length} color="primary">
+                        <CiShoppingBasket style={{ marginRight: '4px' }} className='icon' />
+                    </Badge>
                 </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { setSelectedProduct } from '../redux/slices/productSlice';
 import { CiCirclePlus, CiCircleMinus } from 'react-icons/ci';
 import '../css/ProductDetails.css';
+import { addToBasket, calculateBasket } from '../redux/slices/basketSlice';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -14,14 +15,29 @@ const ProductDetails = () => {
     useEffect(() => {
         if (products && products.length > 0) {
             const found = products.find((product) => product.id == id);
-            if (found) dispatch(setSelectedProduct(found));
+            if (found) {
+                dispatch(setSelectedProduct(found));
+            }
         }
-    }, [id, products, dispatch]);
+    }, []);
 
     const { price, image, title, description } = selectedProduct || {};
 
     const increase = () => setQuantity((prev) => prev + 1);
     const decrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+    const addBasket = () => {
+        const payload = {
+            id,
+            price,
+            image,
+            title,
+            description,
+            quantity
+        }
+        dispatch(addToBasket(payload))
+        dispatch(calculateBasket())
+    }
 
     if (!selectedProduct) return <div>Loading...</div>;
 
@@ -41,7 +57,7 @@ const ProductDetails = () => {
                     <button onClick={increase}><CiCirclePlus size={28} /></button>
                 </div>
 
-                <button className="add-to-cart">Add to Cart</button>
+                <button className="add-to-cart" onClick={addBasket}>Add to Cart</button>
             </div>
         </div>
     );
